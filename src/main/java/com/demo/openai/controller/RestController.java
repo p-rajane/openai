@@ -1,4 +1,4 @@
-package controller;
+package com.demo.openai.controller;
 
 import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -65,12 +65,23 @@ public class RestController {
      */
     @GetMapping("/get/{prompt}")
     public Map<String, String> getPromptResponse(@PathVariable String prompt) {
-        return Map.of(
-                "prompt", prompt,
-                "response", Objects.requireNonNull(chatClient.prompt()
-                        .user(prompt)
-                        .call()
-                        .content())
-        );
+        try {
+            return Map.of(
+                    "prompt", prompt,
+                    "response", Objects.requireNonNull(chatClient.prompt()
+                            .user(prompt)
+                            .call()
+                            .content())
+            );
+        } catch (Exception e) {
+            // Log the exception (you can use a logging framework like SLF4J)
+            System.err.println("Error processing prompt: " + e.getMessage());
+            // Return an error response
+            return Map.of(
+                    "prompt", prompt,
+                    "response", "Error processing prompt: " + e.getMessage()
+            );
+        }
+
     }
 }
